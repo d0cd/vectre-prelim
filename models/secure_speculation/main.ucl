@@ -1,0 +1,38 @@
+module main {
+    type * = common.*;
+
+    instance p1: platform();
+    instance p2: platform();
+
+    init {
+        // Both speculate are the same time
+        assume (p1.speculate == p2.speculate);
+        // Both observations are initially the same
+        assume (p1.obs == p2.obs);
+    }
+
+    next {
+        next(p1); next(p2);
+        assume (p1.pc == p2.pc);
+        assume (p1.spec_level == p2.spec_level);
+        assume ((p1.spec_level == 0bv3) ==> p1.obs == p2.obs);
+
+        // Axiom that says if we are resolving, next cycle, we don't speculate
+        // because a resolve will jump back to the cycle we speculated on incorrectly
+        // and we don't want to explore that path twice
+        assume (p1.resolving ==> !p1'.speculate);
+        assume (p2.resolving ==> !p2'.speculate);
+    }
+
+    invariant same_obs: p1.obs == p2.obs;
+
+    control {
+        tpod = unroll(3);
+        check;
+        print_results;
+        tpod.print_cex(
+            p1.pc, p2.pc,
+            p1.spec_level, p2.spec_level
+        );
+    }
+}

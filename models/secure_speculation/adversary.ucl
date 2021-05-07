@@ -1,0 +1,22 @@
+module adversary {
+	// Import common
+    type * = common.*;
+
+	input return_pc: pc_t;
+
+	output pc: pc_t;
+
+	procedure [inline] tamper()
+		modifies pc;
+	{
+		pc = return_pc;
+	}
+
+	init {
+	}
+
+	next {
+		call tamper();
+	}
+}
+

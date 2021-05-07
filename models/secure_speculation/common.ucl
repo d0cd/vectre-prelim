@@ -1,0 +1,84 @@
+module common {
+    // **************************************************************************
+    // # Architecture variable types
+
+    // Architecture XLEN
+    type xlen_t = bv64;
+    
+    // Program counter type
+    type pc_t = bv64;
+
+    // User / Superuser mode
+    type mode_t = bv2;
+
+    // Address type
+    type addr_t = bv64;
+
+    // Word type
+    type word_t = bv64;
+
+    // Memory type
+    type mem_t = [addr_t]word_t;
+
+    // Register index type
+    type reg_idx_t = bv64;
+    
+    // Register file type
+    type regs_t = [reg_idx_t]word_t;
+
+    // **************************************************************************
+    // # Speculation types
+
+    // Speculation level type
+    type spec_level_t = bv3;
+
+    // **************************************************************************
+    // # Adversary variables
+    type obs_t;
+
+    // **************************************************************************
+    // # Microarchitecture design
+    
+    // Memory access speculation state vairable
+    type mp_state_t;
+    // Returns whether the address is a valid access given the user mode
+    function valid_access(addr: addr_t, mode: mode_t): boolean;
+    // Predicts whether the address is a valid access
+    function ma_prediction(mp_state: mp_state_t, addr: addr_t): boolean;
+    function update_mp_state(mp_state: mp_state_t, addr: addr_t): mp_state_t;
+
+    // Branch predictor primitives
+    type pht_t = [bv64,bv4]boolean;
+    type hist_t = bv4;
+    define bp_prediction(target: addr_t, h: hist_t, pht: pht_t): boolean = pht[target, h];
+    define bp_hist_update(h: hist_t, cond: boolean): hist_t = h[3:1] ++ (if (cond) then 1bv1 else 0bv1);
+
+    // Branch target buffer
+    type btb_t = [bv64]bv64;
+    type btb_valid_t = [bv64]boolean;
+    define btb_valid(pc: pc_t, btb_v: btb_valid_t): boolean = btb_v[pc];
+    define btb_prediction(pc: pc_t, btb: btb_t): pc_t = btb[pc];
+
+    // Observations of the adversaries
+    type obs_t;
+    function update_obs(oc: obs_t, word: word_t): obs_t;
+
+
+    // *************************************************************************
+    // # Constants
+
+    const secret_addr: addr_t;
+    const init_mem: mem_t;
+    const init_regs: regs_t;
+
+    // # Special addresses
+    const adv_pc: pc_t = -3bv64;
+    const exception: pc_t = -5bv64;
+
+    // ************************************************************************************
+    // # Operators
+    define leq(r0: word_t, r1: word_t): boolean = r0 <= r1;
+    define add(r0: word_t, r1: word_t): word_t = r0 + r1;
+    define and(r0: word_t, r1: word_t): word_t = r0 & r1;
+    define geu(r0: word_t, r1: word_t): boolean = r0 >=_u r1;
+}

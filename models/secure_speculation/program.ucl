@@ -1,0 +1,168 @@
+module platform {
+    const init_pc: pc_t = 65868bv64;
+
+    procedure spec_blk_65868() 
+        modifies pc, regs;
+        modifies obs, hist, valid_commit;
+        modifies pc_s, mode_s, mem_s, regs_s, spec_level;
+    {
+        if (speculate) {
+            call snapshot();
+        }
+        {
+            regs[sp] = add(regs[sp], -32bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[s0], 24bv64));
+            regs[sp] = mem[add(regs[s0], 24bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            regs[s0] = add(regs[sp], 32bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[a0], -24bv64));
+            regs[s0] = mem[add(regs[a0], -24bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[gp], -160bv64));
+            regs[a5] = mem[add(regs[gp], -160bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[s0], -24bv64));
+            regs[a4] = mem[add(regs[s0], -24bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            valid_commit[spec_level] = (geu(regs[a4], regs[a5]) == bp_prediction(65952bv64, hist, pht));
+            hist = bp_hist_update(hist, bp_prediction(65952bv64, hist, pht));
+            if (bp_prediction(65952bv64, hist, pht)) {
+                pc = 65952bv64;
+            } else {
+                // pc = add(pc, 4bv64);
+                pc = 65896bv64;
+            }
+        }
+    }
+    procedure spec_blk_65896() 
+        modifies pc, regs, obs;
+        modifies pc_s, mode_s, mem_s, regs_s, spec_level;
+    {
+        if (speculate) {
+            call snapshot();
+        }
+        {
+            regs[a4] = add(regs[gp], -72bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[s0], -24bv64));
+            regs[a5] = mem[add(regs[s0], -24bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = add(regs[a4], regs[a5]);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[a5], 0bv64));
+            regs[a5] = mem[add(regs[a5], 0bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = add(regs[a5], regs[a4]);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = bv_left_shift(9bv64, regs[a5]);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = add(regs[a5], regs[a4]);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a4] = add(regs[gp], -56bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = add(regs[a4], regs[a5]);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[a5], 0bv64));
+            regs[a4] = mem[add(regs[a5], 0bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[gp], -136bv64));
+            regs[a5] = mem[add(regs[gp], -136bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a5] = and(regs[a4], regs[a5]);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[a4] = and(regs[a5], 0bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[a4], -136bv64));
+            regs[gp] = mem[add(regs[a4], -136bv64)];
+            pc = 65952bv64;
+        }
+    }
+    procedure spec_blk_65952() 
+        modifies regs, obs, pc;
+        modifies pc_s, mode_s, mem_s, regs_s, spec_level;
+    {
+        if (speculate) {
+            call snapshot();
+        }
+        {
+            regs[zero] = add(regs[zero], 0bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            obs = update_obs(obs, add(regs[sp], 24bv64));
+            regs[s0] = mem[add(regs[sp], 24bv64)];
+            pc = pc + 4bv64;
+        }
+        {
+            regs[sp] = add(regs[sp], 32bv64);
+            pc = pc + 4bv64;
+        }
+        {
+            regs[zero] = add(pc, 4bv64);
+            pc = regs[ra];
+        }
+    }
+
+    const a0: bv64 = 0bv64;
+    const s0: bv64 = 1bv64;
+    const gp: bv64 = 2bv64;
+    const zero: bv64 = 3bv64;
+    const sp: bv64 = 4bv64;
+    const a5: bv64 = 5bv64;
+    const a4: bv64 = 6bv64;
+    const ra: bv64 = 7bv64;
+
+    next {
+        case
+            (pc==65868bv64): {
+                call spec_blk_65868();
+            }
+            (pc==65896bv64): {
+                call spec_blk_65896();
+            }
+            (pc==65952bv64): {
+                call spec_blk_65952();
+            }
+        esac
+    }
+}
