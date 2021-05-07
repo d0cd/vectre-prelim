@@ -1,0 +1,60 @@
+inst ld(rd: reg_idx_t, rs: reg_idx_t, offset: word_t) {
+	obs = update_obs(obs, regs[rs]);
+	regs[rd] = mem[add(regs[rs], offset)];
+}
+
+inst lbu(rd: reg_idx_t, rs: reg_idx_t, offset: word_t) {
+	obs = update_obs(obs, regs[rs]);
+	regs[rd] = mem[add(regs[rs], offset)];
+}
+
+inst sd(rs: reg_idx_t, rd: reg_idx_t, offset: word_t) {
+	obs = update_obs(obs, regs[rs]);
+	regs[rd] = mem[add(regs[rs], offset)];
+}
+
+inst sb(rs: reg_idx_ts, rd: reg_idx_t, offset: word_t) {
+	obs = update_obs(obs, regs[rs]);
+	regs[rd] = mem[add(regs[rs], offset)];
+}
+
+inst addi(rd: reg_idx_t, rs0: reg_idx_t, imm: word_t) {
+    regs[rd] = add(regs[rs0], imm);
+}
+
+inst addiw(rd: reg_idx_t, rs0: reg_idx_t, imm: word_t) {
+    regs[rd] = add(regs[rs0], regs[rs1]);
+}
+
+inst slliw(rd: reg_idx_t, rs0: reg_idx_t, imm: word_t) {
+    regs[rd] = bv_left_shift(imm, regs[rs0]);
+}
+
+inst add(rd: reg_idx_t, rs0: reg_idx_t, rs1: reg_idx_t) {
+    regs[rd] = add(regs[rs0], regs[rs1]);
+}
+
+inst and(rd: reg_idx_t, rs0: reg_idx_t, rs1: reg_idx_t) {
+    regs[rd] = and(regs[rs0], regs[rs1]);
+}
+
+inst andi(rd: reg_idx_t, rs0: reg_idx_t, imm: word_t) {
+    regs[rd] = and(regs[rs0], word);
+}
+
+inst sub(b: word_t, bb: bool) {
+    regs[rd] = sub(regs[rs0], regs[rs1]);
+}
+
+inst bgeu(rs0: reg_idx_t, rs1: reg_idx_t, target: word_t) {
+	if (geu(regs[rs0], regs[rs1]))[and(bp_speculate, bp_predict(cond, bp_state))] {
+		pc = target;
+	} else {
+		pc = add(pc, 4);
+	}
+}
+
+inst jalr(rd: reg_idx_t, rs: reg_idx_t, imm: word_t) {
+	regs[rd] = add(pc, 4);
+	pc = add(regs[rs], imm);
+}

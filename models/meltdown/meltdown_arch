@@ -1,0 +1,23 @@
+// This model of Meltdown assumes that the kernel is mapped into the user address space.
+// At the moment, the parameters associated the model are hardcoded but eventually
+// we want a script to generate the architectural and instruction models based on the 
+// system parameters.
+
+// Platform: RISCV Linux (4KB pages + 4 levels / 48-bits)
+
+platform P {
+    arch var pc: pc_t;
+    arch var mode: mode_t;
+    arch var mem: mem_t;
+    arch var regs: regs_t;
+
+
+    const user_addr_min = 0bv64;
+    const user_addr_max = 281474976710655bv64; 
+
+    define valid_access(mode: mode_t, word: word_t) : boolean = 
+        (mode == user && user_addr_min <= word && word <= user_addr_max) ||
+        (mode == kernel)                                                 ||
+        (mode == machine);
+
+}

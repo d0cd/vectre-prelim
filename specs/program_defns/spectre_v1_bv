@@ -1,0 +1,30 @@
+prog _Z19victim_function_v01m {
+ENTRY_65868:
+    65868: addi sp, sp, -32bv64;
+    65872: sd s0, sp, 24bv64;
+    65876: addi s0, sp, 32bv64;
+    65880: sd a0, s0, -24bv64;
+    65884: ld a5, gp, -160bv64;
+    65888: ld a4, s0, -24bv64;
+    65892: bgeu a4, a5, 65952bv64;
+ENTRY_65896:
+    65896: addi a4, gp, -72bv64;
+    65900: ld a5, s0, -24bv64;
+    65904: add a5, a4, a5;
+    65908: lbu a5, a5, 0bv64;
+    65912: addiw a5, a5, 0bv64;
+    65916: slliw a5, a5, 9bv64;
+    65920: addiw a5, a5, 0bv64;
+    65924: addi a4, gp, -56bv64;
+    65928: add a5, a4, a5;
+    65932: lbu a4, a5, 0bv64;
+    65936: lbu a5, gp, -136bv64;
+    65940: and a5, a4, a5;
+    65944: andi a4, a5, 255bv64;
+    65948: sb a4, gp, -136bv64;
+ENTRY_65952:
+    65952: addi zero, zero, 0bv64;
+    65956: ld s0, sp, 24bv64;
+    65960: addi sp, sp, 32bv64;
+    65964: jalr zero, ra, 0bv64;
+}

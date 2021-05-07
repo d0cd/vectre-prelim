@@ -1,0 +1,25 @@
+platform P {
+    arch var pc: pc_t;
+    arch var mode: mode_t;
+    arch var mem: mem_t;
+    arch var regs: regs_t;
+
+	march var bp_speculate: boolean;
+	march var ma_speculate: boolean;
+	march var bp_state: bp_state_t;
+	march var ma_state: ma_state_t;
+
+    inst ld;
+    inst lbu;
+    inst sd;
+    inst sb;
+    inst addi;
+    inst addiw;
+    inst slliw;
+    inst add;
+    inst and;
+    inst andi;
+    inst sub;
+    inst bgeu;
+    inst jalr; 
+}
